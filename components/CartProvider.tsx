@@ -5,7 +5,7 @@ import Link from "next/link";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Minus, Package, Plus, Trash2, X } from "lucide-react";
 
-type CartItem = {
+export type CartItem = {
   id: string;
   productId: string;
   name: string;
