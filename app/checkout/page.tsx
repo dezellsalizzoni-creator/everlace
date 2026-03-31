@@ -183,6 +183,7 @@ function CheckoutForm({
           id: orderId,
           createdAt: new Date().toISOString(),
           status: "confirmed",
+          trackingNumber: `TRK-${Math.random().toString(36).slice(2, 10).toUpperCase()}`,
           customer: {
             email: email.trim(),
             phone: phone.trim(),

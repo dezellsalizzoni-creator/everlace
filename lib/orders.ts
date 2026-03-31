@@ -6,6 +6,7 @@ export type Order = {
   id: string;
   createdAt: string;
   status: OrderStatus;
+  trackingNumber?: string;
   customer: {
     email: string;
     phone: string;
@@ -60,6 +61,23 @@ export function saveOrder(order: Order): void {
 
 export function getOrderById(id: string): Order | undefined {
   return getOrders().find((o) => o.id === id);
+}
+
+export function getTrackingNumber(order: Order): string {
+  if (order.trackingNumber) return order.trackingNumber;
+  return `TRK-${order.id.replace(/[^A-Z0-9]/gi, "").slice(-10).toUpperCase()}`;
+}
+
+export function getEstimatedDelivery(order: Order): string {
+  const base = new Date(order.createdAt);
+  const days =
+    order.status === "confirmed" ? 10 : order.status === "processing" ? 7 : order.status === "shipped" ? 3 : 0;
+  const eta = new Date(base.getTime() + days * 24 * 60 * 60 * 1000);
+  return eta.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 export const orderStatusLabel: Record<OrderStatus, string> = {

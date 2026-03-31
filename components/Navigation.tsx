@@ -34,6 +34,9 @@ export default function Navigation() {
         <div className="flex items-center gap-4">
           <Search size={18} />
           <UserRound size={18} />
+          <Link href="/track-order" className="text-xs text-charcoal/80 transition hover:text-burnishedGold">
+            Track Order
+          </Link>
           <button className="relative" onClick={openCart} aria-label="Open cart">
             <ShoppingBag size={18} />
             {itemCount > 0 && (
