@@ -11,9 +11,9 @@ import { CardCvcElement, CardExpiryElement, CardNumberElement, Elements, useElem
 const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? "";
 const stripePromise = publishableKey ? loadStripe(publishableKey) : null;
 const inputBaseClass =
-  "peer w-full rounded-lg border border-black/15 bg-white px-3 pb-2 pt-6 text-sm outline-none transition focus:border-accentGold focus:ring-2 focus:ring-accentGold/30";
+  "peer w-full rounded-lg border border-black/15 bg-white px-3 pb-2 pt-7 text-sm outline-none transition focus:border-accentGold focus:ring-2 focus:ring-accentGold/30";
 const labelBaseClass =
-  "pointer-events-none absolute left-3 text-xs text-charcoal/60 transition-all peer-focus:text-accentGold";
+  "pointer-events-none absolute left-3 text-xs text-charcoal/50 transition-all peer-focus:top-1 peer-focus:-translate-y-0 peer-focus:text-[10px] peer-focus:text-accentGold";
 
 const stripeElementOptions: StripeCardElementOptions = {
   style: {
@@ -175,9 +175,15 @@ function CheckoutForm({ amount, disabled }: { amount: number; disabled: boolean 
   return (
     <form onSubmit={onSubmit} className="mt-5 space-y-4">
       <div className="relative">
-        <span className={`${labelBaseClass} ${focused.number ? "top-2 text-[10px]" : "top-1/2 -translate-y-1/2"}`}>Card Number</span>
+        <span
+          className={`${labelBaseClass} ${
+            focused.number ? "top-1 text-[10px] text-accentGold" : "top-1/2 -translate-y-1/2"
+          }`}
+        >
+          Card Number
+        </span>
         <div
-          className={`w-full rounded-lg border bg-white px-3 pb-2 pt-6 text-sm outline-none transition ${
+          className={`w-full rounded-lg border bg-white px-3 pb-2 pt-7 text-sm outline-none transition ${
             focused.number ? "border-accentGold ring-2 ring-accentGold/30" : "border-black/15"
           }`}
         >
@@ -190,9 +196,15 @@ function CheckoutForm({ amount, disabled }: { amount: number; disabled: boolean 
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="relative">
-          <span className={`${labelBaseClass} ${focused.expiry ? "top-2 text-[10px]" : "top-1/2 -translate-y-1/2"}`}>Expiry</span>
+          <span
+            className={`${labelBaseClass} ${
+              focused.expiry ? "top-1 text-[10px] text-accentGold" : "top-1/2 -translate-y-1/2"
+            }`}
+          >
+            Expiry
+          </span>
           <div
-            className={`w-full rounded-lg border bg-white px-3 pb-2 pt-6 text-sm outline-none transition ${
+            className={`w-full rounded-lg border bg-white px-3 pb-2 pt-7 text-sm outline-none transition ${
               focused.expiry ? "border-accentGold ring-2 ring-accentGold/30" : "border-black/15"
             }`}
           >
@@ -204,9 +216,13 @@ function CheckoutForm({ amount, disabled }: { amount: number; disabled: boolean 
           </div>
         </div>
         <div className="relative">
-          <span className={`${labelBaseClass} ${focused.cvc ? "top-2 text-[10px]" : "top-1/2 -translate-y-1/2"}`}>CVC</span>
+          <span
+            className={`${labelBaseClass} ${focused.cvc ? "top-1 text-[10px] text-accentGold" : "top-1/2 -translate-y-1/2"}`}
+          >
+            CVC
+          </span>
           <div
-            className={`w-full rounded-lg border bg-white px-3 pb-2 pt-6 text-sm outline-none transition ${
+            className={`w-full rounded-lg border bg-white px-3 pb-2 pt-7 text-sm outline-none transition ${
               focused.cvc ? "border-accentGold ring-2 ring-accentGold/30" : "border-black/15"
             }`}
           >
@@ -253,8 +269,8 @@ function FloatingInput({
       <input className={inputBaseClass} value={value} onChange={(e) => onChange(e.target.value)} placeholder=" " />
       <span
         className={`${labelBaseClass} ${
-          value ? "top-2 text-[10px] text-accentGold" : "top-1/2 -translate-y-1/2"
-        } peer-focus:top-2 peer-focus:-translate-y-0 peer-focus:text-[10px]`}
+          value ? "top-1 text-[10px] text-charcoal/60" : "top-1/2 -translate-y-1/2"
+        }`}
       >
         {label}
       </span>
