@@ -12,8 +12,21 @@ const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? "";
 const stripePromise = publishableKey ? loadStripe(publishableKey) : null;
 const inputBaseClass =
   "peer w-full rounded-lg border border-black/15 bg-white px-3 pb-2 pt-7 text-sm outline-none transition focus:border-accentGold focus:ring-2 focus:ring-accentGold/30";
+
+/** 文本输入：空态 top-3；聚焦或有内容时 -top-2 + text-[10px]（peer 必须在标签前的 input 上） */
 const labelBaseClass =
-  "pointer-events-none absolute left-3 top-3 text-xs text-charcoal/50 transition-all peer-focus:top-1 peer-focus:-translate-y-0 peer-focus:text-[10px] peer-focus:text-accentGold";
+  "pointer-events-none absolute left-3 top-3 z-10 text-xs text-charcoal/50 transition-all duration-200 " +
+  "peer-focus:-top-2 peer-focus:text-[10px] peer-focus:text-accentGold " +
+  "peer-[:not(:placeholder-shown)]:-top-2 peer-[:not(:placeholder-shown)]:text-[10px] " +
+  "peer-[:not(:placeholder-shown)]:text-charcoal/60";
+
+/** Stripe iframe：无 placeholder，用 group-focus-within 模拟上浮 */
+const stripeFieldClass =
+  "w-full rounded-lg border border-black/15 bg-white px-3 pb-2 pt-7 text-sm outline-none transition " +
+  "group-focus-within:border-accentGold group-focus-within:ring-2 group-focus-within:ring-accentGold/30";
+const stripeLabelClass =
+  "pointer-events-none absolute left-3 top-3 z-10 text-xs text-charcoal/50 transition-all duration-200 " +
+  "group-focus-within:-top-2 group-focus-within:text-[10px] group-focus-within:text-accentGold";
 
 const stripeElementOptions: StripeCardElementOptions = {
   style: {
@@ -111,11 +124,6 @@ function CheckoutForm({ amount, disabled }: { amount: number; disabled: boolean 
   const [country, setCountry] = useState("US");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [focused, setFocused] = useState({
-    number: false,
-    expiry: false,
-    cvc: false,
-  });
 
   const amountCents = useMemo(() => Math.round(amount * 100), [amount]);
 
@@ -174,48 +182,24 @@ function CheckoutForm({ amount, disabled }: { amount: number; disabled: boolean 
 
   return (
     <form onSubmit={onSubmit} className="mt-5 space-y-4">
-      <div className="relative">
-        <span className={`${labelBaseClass} ${focused.number ? "top-1 text-[10px] text-accentGold" : ""}`}>Card Number</span>
-        <div
-          className={`w-full rounded-lg border bg-white px-3 pb-2 pt-7 text-sm outline-none transition ${
-            focused.number ? "border-accentGold ring-2 ring-accentGold/30" : "border-black/15"
-          }`}
-        >
-          <CardNumberElement
-            options={stripeElementOptions}
-            onFocus={() => setFocused((prev) => ({ ...prev, number: true }))}
-            onBlur={() => setFocused((prev) => ({ ...prev, number: false }))}
-          />
+      <div className="group relative">
+        <div className={stripeFieldClass}>
+          <CardNumberElement options={stripeElementOptions} />
         </div>
+        <span className={stripeLabelClass}>Card Number</span>
       </div>
       <div className="grid grid-cols-2 gap-3">
-        <div className="relative">
-          <span className={`${labelBaseClass} ${focused.expiry ? "top-1 text-[10px] text-accentGold" : ""}`}>Expiry</span>
-          <div
-            className={`w-full rounded-lg border bg-white px-3 pb-2 pt-7 text-sm outline-none transition ${
-              focused.expiry ? "border-accentGold ring-2 ring-accentGold/30" : "border-black/15"
-            }`}
-          >
-            <CardExpiryElement
-              options={stripeElementOptions}
-              onFocus={() => setFocused((prev) => ({ ...prev, expiry: true }))}
-              onBlur={() => setFocused((prev) => ({ ...prev, expiry: false }))}
-            />
+        <div className="group relative">
+          <div className={stripeFieldClass}>
+            <CardExpiryElement options={stripeElementOptions} />
           </div>
+          <span className={stripeLabelClass}>Expiry</span>
         </div>
-        <div className="relative">
-          <span className={`${labelBaseClass} ${focused.cvc ? "top-1 text-[10px] text-accentGold" : ""}`}>CVC</span>
-          <div
-            className={`w-full rounded-lg border bg-white px-3 pb-2 pt-7 text-sm outline-none transition ${
-              focused.cvc ? "border-accentGold ring-2 ring-accentGold/30" : "border-black/15"
-            }`}
-          >
-            <CardCvcElement
-              options={stripeElementOptions}
-              onFocus={() => setFocused((prev) => ({ ...prev, cvc: true }))}
-              onBlur={() => setFocused((prev) => ({ ...prev, cvc: false }))}
-            />
+        <div className="group relative">
+          <div className={stripeFieldClass}>
+            <CardCvcElement options={stripeElementOptions} />
           </div>
+          <span className={stripeLabelClass}>CVC</span>
         </div>
       </div>
       <div className="grid gap-3">
@@ -251,9 +235,7 @@ function FloatingInput({
   return (
     <label className="relative block">
       <input className={inputBaseClass} value={value} onChange={(e) => onChange(e.target.value)} placeholder=" " />
-      <span className={`${labelBaseClass} ${value ? "top-1 text-[10px] text-charcoal/60" : ""}`}>
-        {label}
-      </span>
+      <span className={labelBaseClass}>{label}</span>
     </label>
   );
 }
